@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
+from dotenv import load_dotenv
+load_dotenv(override=True)
 import subprocess
 import json
 import time
 import requests
 from pynvml.smi import nvidia_smi
-
-WEBHOOK_URL="https://husm.webhook.office.com/webhookb2/62c2a56f-c97c-4fcf-8945-0ac06273c91d@16fbddaa-9f9a-42a5-afbf-d65e420db2fc/IncomingWebhook/f371a2f21034457e8437556e263dde7a/c6f83a96-8b44-4847-985f-33756fd87a73"
-WAIT = 3600
-CYCLE = 86400
+import os
+WEBHOOK_URL=os.getenv('WEBHOOK_URL')
+WAIT = 3600 #1h
+SLEEP= 60 #1min
+CYCLE = 86400 #24h
 start = time.perf_counter()
 command = "nvidia-smi pmon -s u -o DT -c 1 | jc --df -p | jq 'map(select(.type==\"C\")) | map(select(.sm==\"-\"))'"
 command_byte = command.encode()
@@ -20,9 +23,7 @@ if __name__ == '__main__':
     while True:
         output_str =  json.loads(subprocess.run(command,capture_output=True, shell=True).stdout)
         end = time.perf_counter()
-        # if (end - start > 86400):
-        #     break
-        time.sleep(60)
+        time.sleep(SLEEP)
         if (end-start>CYCLE):
             break
         if (output_str==[]):
