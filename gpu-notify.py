@@ -36,10 +36,11 @@ if __name__ == '__main__':
                     elif (time.perf_counter()-pids[i["pid"]][0]>WAIT):
                         # おそらくこのコードだと、GPU0(特定GPU)のみになることに注意
                         pysmi = nvidia_smi.getInstance().DeviceQuery()["gpu"][0]["processes"]["pid"==i["pid"]]
+                        # pid -> ユーザー名はpsコマンド以外で取得する術を知りませんでした
                         ps = subprocess.run("ps axo user,pid | grep {}".format(i["pid"]),capture_output=True,encoding="utf-8", shell=True).stdout[:-7]
-                        print()
+                        # jsonの改行は\\nです！！
                         json_data = {
-                            'text': 'Hi, {} pid:{}, {}MiB process remains without computing.\nPlease shutdown your notebook or process.'.format(ps,i["pid"],pysmi["used_memory"]),
+                            'text': 'Hi, {}\\npid:{}, {}MiB process remains without computing.\\nPlease shutdown your notebook or process.'.format(ps,i["pid"],pysmi["used_memory"]),
                         }
                         response = requests.post(WEBHOOK_URL, headers=headers, json=json_data)
                         pids[i["pid"]]=[time.perf_counter(),1]
