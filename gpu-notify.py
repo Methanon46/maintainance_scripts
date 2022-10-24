@@ -8,8 +8,8 @@ import requests
 from pynvml.smi import nvidia_smi
 import os
 WEBHOOK_URL=os.getenv('WEBHOOK_URL')
-WAIT = 10 #1h
-SLEEP= 1 #1min
+WAIT = 3600 #1h
+SLEEP= 60 #1min
 CYCLE = 86400 #24h
 start = time.perf_counter()
 command = "nvidia-smi pmon -s u -o DT -c 1 | jc --df -p | jq 'map(select(.type==\"C\")) | map(select(.sm==\"-\"))'"
