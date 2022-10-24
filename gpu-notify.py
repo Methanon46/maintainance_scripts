@@ -35,7 +35,7 @@ if __name__ == '__main__':
                     if(pids[i["pid"]][1]==1):
                         continue
                     elif (time.perf_counter()-pids[i["pid"]][0]>WAIT):
-                        # おそらくこのコードだと、GPU
+                        # おそらくこのコードだと、GPU0(特定GPU)のみになることに注意
                         pysmi = nvidia_smi.getInstance().DeviceQuery()["gpu"][0]["processes"]["pid"==i["pid"]]
                         json_data = {
                             'text': 'pid:{}, {}MiB process remains without computing.\nPlease shutdown your notebook or process.'.format(i["pid"],pysmi["used_memory"]),
