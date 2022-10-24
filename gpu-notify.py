@@ -14,6 +14,7 @@ CYCLE = 86400 #24h
 start = time.perf_counter()
 command = "nvidia-smi pmon -s u -o DT -c 1 | jc --df -p | jq 'map(select(.type==\"C\")) | map(select(.sm==\"-\"))'"
 command_byte = command.encode()
+# pidsはpidと時刻の辞書
 pids = {}
 headers = {
     'Content-Type': 'application/json',
@@ -34,6 +35,7 @@ if __name__ == '__main__':
                     if(pids[i["pid"]][1]==1):
                         continue
                     elif (time.perf_counter()-pids[i["pid"]][0]>WAIT):
+                        # おそらくこのコードだと、GPU
                         pysmi = nvidia_smi.getInstance().DeviceQuery()["gpu"][0]["processes"]["pid"==i["pid"]]
                         json_data = {
                             'text': 'pid:{}, {}MiB process remains without computing.\nPlease shutdown your notebook or process.'.format(i["pid"],pysmi["used_memory"]),
